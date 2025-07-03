@@ -133,7 +133,7 @@ public class GlobalExceptionHandler {
     	logger.error("Exception: {}", ex.getMessage(), ex);
         return new ResponseClass<>(
             HttpStatus.INTERNAL_SERVER_ERROR,
-            "An unexpected error occurred: " + ex.getMessage(),
+            ex.getMessage(),
             null
         );
     }
