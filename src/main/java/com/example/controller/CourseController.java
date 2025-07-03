@@ -74,7 +74,7 @@ public class CourseController {
         Course course = CourseMapper.toEntity(courseDTO);
         Course created = courseService.createCourse(course);
         CourseDTO dto = CourseMapper.toDTO(created);
-        logger.debug("Created course mapped to DTO: {}", dto);
+        logger.debug("Created course mapped to DTO");
 
         return new ResponseClass<>(
                 HttpStatus.CREATED,
@@ -86,7 +86,7 @@ public class CourseController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<CourseDTO> updateCourse(@PathVariable Long id, @Valid @RequestBody CourseDTO courseDTO) {
-        logger.info("Updating course");
+        logger.info("Updating course with ID: {}, new data: {}", id, courseDTO);
         Course courseDetails = CourseMapper.toEntity(courseDTO);
         Course updatedCourse = courseService.updateCourse(id, courseDetails);
         
