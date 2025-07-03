@@ -36,13 +36,13 @@ public class UserController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        logger.info("Fetching paginated users - page: {}, size: {}", page, size);
+        logger.info("Received request to get paginated users");
 
         List<User> users = userService.getAllUsers(page, size);
 
         List<UserDTO> userDTOs = users.stream()
                 .map(UserMapper::toDTO)
-                .peek(dto -> logger.debug("Mapped User to UserDTO: {}", dto))
+                .peek(dto -> logger.debug("Mapped user entity to DTO"))
                 .collect(Collectors.toList());
 
         return new ResponseClass<>(
@@ -52,12 +52,13 @@ public class UserController {
         );
     }
 
-
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<UserDTO> getUserById(@PathVariable Long id) {
-        logger.info("GET /api/users/{} - Fetching user by ID", id);
+        logger.info("Received request to get a user by ID");
+
         User user = userService.getUserById(id);
+
         return new ResponseClass<>(
                 HttpStatus.OK,
                 Constants.Ret,
@@ -68,10 +69,12 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseClass<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
-        logger.info("POST /api/users - Creating user with name: {}", userDTO.getName());
+        logger.info("Received request to create a new user");
+
         User user = UserMapper.toEntity(userDTO, Set.of());
         User created = userService.createUser(user);
-        logger.debug("Created user with ID: {}", created.getId());
+
+        logger.debug("User created successfully");
 
         return new ResponseClass<>(
                 HttpStatus.CREATED,
@@ -83,11 +86,13 @@ public class UserController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
-        logger.info("PUT /api/users/{} - Updating user", id);
+        logger.info("Received request to update a user");
+
         User existingUser = userService.getUserById(id);
         User userDetails = UserMapper.toEntity(userDTO, existingUser.getCourses());
         User updatedUser = userService.updateUser(id, userDetails);
-        logger.debug("Updated user ID: {}", updatedUser.getId());
+
+        logger.debug("User updated successfully");
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -99,9 +104,11 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<UserDTO> deleteUser(@PathVariable Long id) {
-        logger.info("DELETE /api/users/{} - Deleting user", id);
+        logger.info("Received request to delete a user");
+
         UserDTO deletedUser = userService.deleteUser(id);
-        logger.debug("Deleted user with ID: {}", id);
+
+        logger.debug("User deleted successfully");
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -113,9 +120,11 @@ public class UserController {
     @PostMapping("/{id}/courses")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<UserDTO> enrollUserInCourses(@PathVariable Long id, @RequestBody Set<Long> courseIds) {
-        logger.info("POST /api/users/{}/courses - Enrolling user in courses: {}", id, courseIds);
+        logger.info("Received request to enroll user in courses");
+
         User updatedUser = userService.enrollUserInCourses(id, courseIds);
-        logger.debug("User ID {} enrolled in {} courses", id, courseIds.size());
+
+        logger.debug("User enrolled in {} courses", courseIds.size());
 
         return new ResponseClass<>(
                 HttpStatus.OK,

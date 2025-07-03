@@ -40,13 +40,13 @@ public class PlatformController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        logger.info("Received request to get paginated platforms - page: {}, size: {}", page, size);
+        logger.info("Received request to get paginated platforms");
 
         List<Platform> platforms = platformService.getAllPlatforms(page, size);
 
         List<PlatformDTO> dtos = platforms.stream()
                 .map(PlatformMapper::toDTO)
-                .peek(dto -> logger.debug("Mapped Platform to DTO: {}", dto))
+                .peek(dto -> logger.debug("Mapped a platform entity to DTO"))
                 .collect(Collectors.toList());
 
         return new ResponseClass<>(
@@ -59,7 +59,8 @@ public class PlatformController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<PlatformDTO> getPlatformById(@PathVariable Long id) {
-        logger.info("Received request to get platform by id: {}", id);
+        logger.info("Received request to get a platform by ID");
+
         Platform platform = platformService.getPlatformById(id);
         PlatformDTO dto = PlatformMapper.toDTO(platform);
 
@@ -73,13 +74,14 @@ public class PlatformController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseClass<PlatformDTO> createPlatform(@Valid @RequestBody PlatformDTO platformDTO) {
+        logger.info("Received request to create a new platform");
 
-        logger.info("Received request to create platform");
         Set<Course> courses = platformService.getCoursesByDTO(platformDTO);
         Platform platform = PlatformMapper.toEntity(platformDTO, courses);
         Platform created = platformService.createPlatform(platform);
         PlatformDTO dto = PlatformMapper.toDTO(created);
-        logger.debug("Created platform with ID: {}", dto.getId());
+
+        logger.debug("Platform created successfully");
 
         return new ResponseClass<>(
                 HttpStatus.CREATED,
@@ -91,12 +93,14 @@ public class PlatformController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<PlatformDTO> updatePlatform(@PathVariable Long id, @Valid @RequestBody PlatformDTO platformDTO) {
-        logger.info("Received request to update platform with id: {}", id);
+        logger.info("Received request to update a platform");
+
         Set<Course> courses = platformService.getCoursesByDTO(platformDTO);
         Platform platformDetails = PlatformMapper.toEntity(platformDTO, courses);
         Platform updated = platformService.updatePlatform(id, platformDetails);
         PlatformDTO dto = PlatformMapper.toDTO(updated);
-        logger.debug("Updated platform with id: {}", dto.getId());
+
+        logger.debug("Platform updated successfully");
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -108,9 +112,11 @@ public class PlatformController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<PlatformDTO> deletePlatform(@PathVariable Long id) {
-        logger.info("Received request to delete platform with id: {}", id);
+        logger.info("Received request to delete a platform");
+
         PlatformDTO dto = platformService.deletePlatformById(id);
-        logger.debug("Deleted platform with id: {}", id);
+
+        logger.debug("Platform deleted successfully");
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -124,9 +130,11 @@ public class PlatformController {
     @GetMapping("/{mongoId}/users")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<List<UserDTO>> getUsersByPlatformMongoId(@PathVariable String mongoId) {
-        logger.info("Received request to get users from MongoDB for platform ID: {}", mongoId);
+        logger.info("Received request to get users from MongoDB for a platform");
+
         List<UserDTO> users = platformService.getUsersByPlatformIdFromMongo(mongoId);
-        logger.debug("Found {} users for Mongo platform ID: {}", users.size(), mongoId);
+
+        logger.debug("Retrieved user list from MongoDB");
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -138,9 +146,11 @@ public class PlatformController {
     @GetMapping("/{mongoId}/courses")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<List<CourseDTO>> getCoursesByPlatformMongoId(@PathVariable String mongoId) {
-        logger.info("Received request to get courses from MongoDB for platform ID: {}", mongoId);
+        logger.info("Received request to get courses from MongoDB for a platform");
+
         List<CourseDTO> courses = platformService.getCoursesByPlatformIdFromMongo(mongoId);
-        logger.debug("Found {} courses for Mongo platform ID: {}", courses.size(), mongoId);
+
+        logger.debug("Retrieved course list from MongoDB");
 
         return new ResponseClass<>(
                 HttpStatus.OK,

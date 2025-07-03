@@ -42,55 +42,55 @@ public class UserService {
     }
 
     public List<User> getAllUsers(int page, int size) {
-        logger.info("Fetching paginated users - page: {}, size: {}", page, size);
+        logger.info("Fetching paginated users");
 
         Pageable pageable = PageRequest.of(page, size);
         Page<User> pagedUsers = userRepository.findAll(pageable);
 
-        logger.debug("Found {} users on page {}", pagedUsers.getNumberOfElements(), page);
+        logger.debug("Found {} users", pagedUsers.getNumberOfElements());
 
         return pagedUsers.getContent();
     }
 
-
     public User getUserById(Long id) {
-        logger.info("Fetching user by ID: {}", id);
+        logger.info("Fetching user by ID");
+
         return userRepository.findById(id)
             .orElseThrow(() -> {
-                logger.warn("User not found with ID {}", id);
+                logger.warn("User not found");
                 return new EntityNotFoundException(Constants.NFI + id);
             });
     }
 
     public User createUser(User user) {
-        logger.info("Creating user with email: {}", user.getEmail());
+        logger.info("Creating user");
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            logger.warn("User already exists with email: {}", user.getEmail());
+            logger.warn("User already exists with given email");
             throw new IllegalArgumentException(Constants.AEE + user.getEmail());
         }
 
         User saved = userRepository.save(user);
-        logger.debug("User created with ID {}", saved.getId());
+        logger.debug("User created successfully");
 
         platformSyncService.syncAllAffectedPlatforms(saved);
-        logger.info("Triggered sync for platforms affected by user ID {}", saved.getId());
+        logger.info("Triggered platform sync after user creation");
 
         return saved;
     }
 
     public User updateUser(Long id, User userDetails) {
-        logger.info("Updating user with ID {}", id);
+        logger.info("Updating user");
 
         User user = userRepository.findById(id)
             .orElseThrow(() -> {
-                logger.warn("User not found with ID {}", id);
+                logger.warn("User not found");
                 return new EntityNotFoundException(Constants.NFI + id);
             });
 
         if (userRepository.existsByEmail(userDetails.getEmail()) &&
             !user.getEmail().equals(userDetails.getEmail())) {
-            logger.warn("Email already exists for another user: {}", userDetails.getEmail());
+            logger.warn("Email already in use by another user");
             throw new IllegalArgumentException(Constants.AEE + userDetails.getEmail());
         }
 
@@ -102,49 +102,49 @@ public class UserService {
         }
 
         User updated = userRepository.save(user);
-        logger.debug("User updated with ID {}", updated.getId());
+        logger.debug("User updated successfully");
 
         platformSyncService.syncAllAffectedPlatforms(updated);
-        logger.info("Triggered sync for platforms affected by updated user ID {}", updated.getId());
+        logger.info("Triggered platform sync after user update");
 
         return updated;
     }
 
     @Transactional
     public UserDTO deleteUser(Long id) {
-        logger.info("Deleting user with ID {}", id);
+        logger.info("Deleting user");
 
         User user = userRepository.findById(id)
             .orElseThrow(() -> {
-                logger.warn("User not found for deletion with ID {}", id);
+                logger.warn("User not found for deletion");
                 return new EntityNotFoundException(Constants.NFI + id);
             });
 
         UserDTO dto = UserMapper.toDTO(user);
 
         platformSyncService.syncAllAffectedPlatforms(user);
-        logger.info("Triggered sync for platforms to remove user ID {}", id);
+        logger.info("Triggered platform sync for user deletion");
 
         userRepository.deleteById(id);
-        logger.debug("Deleted user with ID {}", id);
+        logger.debug("User deleted successfully");
 
         return dto;
     }
 
     @Transactional
     public User enrollUserInCourses(Long userId, Set<Long> courseIds) {
-        logger.info("Enrolling user ID {} in courses: {}", userId, courseIds);
+        logger.info("Enrolling user in courses");
 
         User user = userRepository.findById(userId)
             .orElseThrow(() -> {
-                logger.warn("User not found with ID {}", userId);
+                logger.warn("User not found");
                 return new EntityNotFoundException(Constants.NFI + userId);
             });
 
         Set<Course> originalCourses = new HashSet<>(user.getCourses());
 
         if (courseIds == null || courseIds.isEmpty()) {
-            logger.debug("Clearing all course enrollments for user ID {}", userId);
+            logger.debug("Clearing course enrollments for user");
             user.getCourses().clear();
         } else {
             List<Course> foundCourses = courseRepository.findAllById(courseIds);
@@ -154,7 +154,7 @@ public class UserService {
                 Set<Long> missingIds = new HashSet<>(courseIds);
                 missingIds.removeAll(foundIds);
 
-                logger.warn("Some course IDs not found for enrollment: {}", missingIds);
+                logger.warn("Some course IDs not found for enrollment");
                 throw new EntityNotFoundException(Constants.NFI + missingIds);
             }
 
@@ -163,13 +163,13 @@ public class UserService {
         }
 
         User updated = userRepository.save(user);
-        logger.debug("Updated course enrollments for user ID {}", userId);
+        logger.debug("Course enrollments updated for user");
 
         Set<Course> allAffected = new HashSet<>(originalCourses);
         allAffected.addAll(user.getCourses());
 
         platformSyncService.syncPlatformsByCourses(allAffected);
-        logger.info("Triggered sync for platforms affected by user ID {}'s course updates", userId);
+        logger.info("Triggered platform sync after course enrollment");
 
         return updated;
     }

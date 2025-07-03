@@ -48,29 +48,29 @@ public class PlatformService {
     }
 
     public List<Platform> getAllPlatforms(int page, int size) {
-        logger.info("Fetching paginated platforms - page: {}, size: {}", page, size);
+        logger.info("Fetching paginated platforms");
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Platform> pagedPlatforms = platformRepository.findAll(pageable);
 
-        logger.debug("Found {} platforms on page {}", pagedPlatforms.getNumberOfElements(), page);
+        logger.debug("Found {} platforms", pagedPlatforms.getNumberOfElements());
 
         return pagedPlatforms.getContent();
     }
 
-
     public Platform getPlatformById(Long id) {
-        logger.info("Fetching platform by ID: {}", id);
+        logger.info("Fetching platform by ID");
+
         return platformRepository.findById(id)
             .orElseThrow(() -> {
-                logger.warn("Platform not found with ID {}", id);
+                logger.warn("Platform not found");
                 return new EntityNotFoundException(Constants.NFI + id);
             });
     }
 
     @Transactional
     public Platform createPlatform(Platform platform) {
-        logger.info("Creating platform: {}", platform.getName());
+        logger.info("Creating new platform");
 
         Set<Course> courses = platform.getCourses();
         if (courses != null) {
@@ -78,17 +78,17 @@ public class PlatformService {
         }
 
         Platform saved = platformRepository.save(platform);
-        logger.debug("Platform created with ID {}", saved.getId());
+        logger.debug("Platform created successfully");
 
         platformSyncService.syncToMongo(saved);
-        logger.info("Triggered async MongoDB sync for platform ID {}", saved.getId());
+        logger.info("Triggered async MongoDB sync");
 
         return saved;
     }
 
     @Transactional
     public Platform updatePlatform(Long id, Platform platformDetails) {
-        logger.info("Updating platform with ID {}", id);
+        logger.info("Updating platform");
 
         Platform existing = getPlatformById(id);
         existing.setName(platformDetails.getName());
@@ -121,35 +121,35 @@ public class PlatformService {
         }
 
         Platform updated = platformRepository.save(existing);
-        logger.debug("Platform updated with ID {}", updated.getId());
+        logger.debug("Platform updated successfully");
 
         platformSyncService.syncToMongo(updated);
-        logger.info("Triggered async MongoDB sync for platform ID {}", updated.getId());
+        logger.info("Triggered async MongoDB sync");
 
         return updated;
     }
 
     @Transactional
     public PlatformDTO deletePlatformById(Long id) {
-        logger.info("Deleting platform with ID {}", id);
+        logger.info("Deleting platform");
 
         Platform existing = getPlatformById(id);
         PlatformDTO dto = PlatformMapper.toDTO(existing);
 
         platformRepository.delete(existing);
-        logger.debug("Deleted platform from SQL with ID {}", id);
+        logger.debug("Platform deleted from SQL");
 
         platformSyncService.deletePlatformFromMongo(id);
-        logger.info("Triggered async MongoDB delete for platform ID {}", id);
+        logger.info("Triggered async MongoDB delete");
 
         return dto;
     }
 
     public Set<Course> getCoursesByDTO(PlatformDTO dto) {
-        logger.info("Fetching courses by DTO");
+        logger.info("Resolving courses from DTO");
 
         if (dto == null || dto.getCourses() == null || dto.getCourses().isEmpty()) {
-            logger.debug("No courses provided in DTO");
+            logger.debug("No courses found in DTO");
             return Collections.emptySet();
         }
 
@@ -159,7 +159,7 @@ public class PlatformService {
                 .collect(Collectors.toSet());
 
         if (courseIds.isEmpty()) {
-            logger.debug("No valid course IDs found in DTO");
+            logger.debug("No valid course IDs found");
             return Collections.emptySet();
         }
 
@@ -169,7 +169,7 @@ public class PlatformService {
             Set<Long> foundIds = foundCourses.stream().map(Course::getId).collect(Collectors.toSet());
             Set<Long> missingIds = new HashSet<>(courseIds);
             missingIds.removeAll(foundIds);
-            logger.warn("Missing courses with IDs: {}", missingIds);
+            logger.warn("Some course IDs not found");
             throw new EntityNotFoundException(Constants.NFI + missingIds);
         }
 
@@ -177,17 +177,17 @@ public class PlatformService {
     }
 
     public List<UserDTO> getUsersByPlatformIdFromMongo(String platformDocId) {
-        logger.info("Fetching users for platform document ID {}", platformDocId);
+        logger.info("Fetching users from MongoDB");
 
         PlatformDocument doc = platformDocRepository.findById(platformDocId)
                 .orElseThrow(() -> {
-                    logger.warn("Platform document not found with ID {}", platformDocId);
+                    logger.warn("Platform document not found");
                     return new EntityNotFoundException(Constants.NFI + platformDocId);
                 });
 
         List<CourseEmbed> courses = doc.getCourses();
         if (courses == null || courses.isEmpty()) {
-            logger.debug("No courses found in platform document ID {}", platformDocId);
+            logger.debug("No courses found in platform document");
             return Collections.emptyList();
         }
 
@@ -200,8 +200,7 @@ public class PlatformService {
             if (enrolledUsers == null) continue;
 
             for (PlatformDocument.UserEmbed user : enrolledUsers) {
-                userToCourseIds.computeIfAbsent(user.getId(), k -> new HashSet<>())
-                               .add(courseId);
+                userToCourseIds.computeIfAbsent(user.getId(), k -> new HashSet<>()).add(courseId);
             }
         }
 
@@ -227,17 +226,17 @@ public class PlatformService {
     }
 
     public List<CourseDTO> getCoursesByPlatformIdFromMongo(String platformDocId) {
-        logger.info("Fetching courses for platform document ID {}", platformDocId);
+        logger.info("Fetching courses from MongoDB");
 
         PlatformDocument doc = platformDocRepository.findById(platformDocId)
                 .orElseThrow(() -> {
-                    logger.warn("Platform document not found with ID {}", platformDocId);
+                    logger.warn("Platform document not found");
                     return new EntityNotFoundException(Constants.NFI + platformDocId);
                 });
 
         List<CourseEmbed> courses = doc.getCourses();
         if (courses == null) {
-            logger.debug("No courses embedded in document ID {}", platformDocId);
+            logger.debug("No embedded courses in platform document");
             return Collections.emptyList();
         }
 
@@ -253,7 +252,7 @@ public class PlatformService {
         try {
             return idStr == null ? null : Long.valueOf(idStr);
         } catch (NumberFormatException e) {
-            logger.error("Failed to parse ID string '{}' into Long", idStr);
+            logger.error("Failed to parse ID string");
             return null;
         }
     }
