@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
  * Mapper class for converting between User entity and UserDTO.
  */
 public class UserMapper {
+	
+	private UserMapper() {
+		throw new IllegalStateException("This is a utility class");
+	}
 
     /**
      * Converts User entity to UserDTO.

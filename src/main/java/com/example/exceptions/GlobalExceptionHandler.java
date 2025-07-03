@@ -124,6 +124,21 @@ public class GlobalExceptionHandler {
                 null
             );
     }
+    
+    
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseClass<String> handleIllegalStateException(Exception ex) {
+    	logger.error("Exception: {}", ex.getMessage(), ex);
+        return new ResponseClass<>(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "An unexpected error occurred: " + ex.getMessage(),
+            null
+        );
+    }
+    
+    
     /**
      * Handles generic exceptions.
      *

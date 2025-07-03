@@ -7,6 +7,10 @@ import com.example.entity.Course;
  * Mapper class for converting between Course entity and CourseDTO.
  */
 public class CourseMapper {
+	
+	private CourseMapper() {
+		throw new IllegalStateException("This is a utility class");
+	}
 
     /**
      * Converts Course entity to CourseDTO.

@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Set;
 
 public class PlatformMapper {
+	
+	private PlatformMapper() {
+		throw new IllegalStateException("This is a utility class");
+	}
 
     public static PlatformDTO toDTO(Platform platform) {
         if (platform == null) return null;
