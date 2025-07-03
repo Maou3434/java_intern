@@ -1,19 +1,28 @@
 package com.example.service;
 
+// Constants for messages
 import com.example.constants.Constants;
+// DTOs and mappers
 import com.example.dto.UserDTO;
+import com.example.mapper.UserMapper;
+// Entities
 import com.example.entity.Course;
 import com.example.entity.User;
-import com.example.mapper.UserMapper;
+// Repositories
 import com.example.repo.CourseRepository;
 import com.example.repo.UserRepository;
+// Sync service for platforms
 import com.example.sync.PlatformSyncService;
 
+// Exceptions and transactions
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
+// Logging
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+// Spring annotations and pagination
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +32,11 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service layer for managing User entities,
+ * including CRUD operations, course enrollment,
+ * and triggering platform synchronization.
+ */
 @Service
 public class UserService {
 
@@ -32,6 +46,13 @@ public class UserService {
     private final CourseRepository courseRepository;
     private final PlatformSyncService platformSyncService;
 
+    /**
+     * Constructor for UserService.
+     *
+     * @param userRepository repository for User entities
+     * @param courseRepository repository for Course entities
+     * @param platformSyncService service to sync affected platforms
+     */
     @Autowired
     public UserService(UserRepository userRepository,
                        CourseRepository courseRepository,
@@ -41,6 +62,13 @@ public class UserService {
         this.platformSyncService = platformSyncService;
     }
 
+    /**
+     * Retrieves paginated users.
+     *
+     * @param page zero-based page index
+     * @param size number of users per page
+     * @return list of users in the requested page
+     */
     public List<User> getAllUsers(int page, int size) {
         logger.info("Fetching paginated users");
 
@@ -52,6 +80,13 @@ public class UserService {
         return pagedUsers.getContent();
     }
 
+    /**
+     * Retrieves a user by ID.
+     *
+     * @param id user ID
+     * @return user entity if found
+     * @throws EntityNotFoundException if user not found
+     */
     public User getUserById(Long id) {
         logger.info("Fetching user by ID");
 
@@ -62,6 +97,15 @@ public class UserService {
             });
     }
 
+    /**
+     * Creates a new user.
+     * Checks for existing email to prevent duplicates.
+     * Triggers platform sync after creation.
+     *
+     * @param user user entity to create
+     * @return created user entity
+     * @throws IllegalArgumentException if email already exists
+     */
     public User createUser(User user) {
         logger.info("Creating user");
 
@@ -79,6 +123,17 @@ public class UserService {
         return saved;
     }
 
+    /**
+     * Updates existing user details.
+     * Prevents email duplication.
+     * Triggers platform sync after update.
+     *
+     * @param id user ID to update
+     * @param userDetails user entity containing updated data
+     * @return updated user entity
+     * @throws EntityNotFoundException if user not found
+     * @throws IllegalArgumentException if new email already exists on another user
+     */
     public User updateUser(Long id, User userDetails) {
         logger.info("Updating user");
 
@@ -110,6 +165,14 @@ public class UserService {
         return updated;
     }
 
+    /**
+     * Deletes a user by ID.
+     * Triggers platform sync after deletion.
+     *
+     * @param id user ID to delete
+     * @return DTO representation of deleted user
+     * @throws EntityNotFoundException if user not found
+     */
     @Transactional
     public UserDTO deleteUser(Long id) {
         logger.info("Deleting user");
@@ -131,6 +194,16 @@ public class UserService {
         return dto;
     }
 
+    /**
+     * Enrolls a user in a set of courses.
+     * Validates course IDs and updates user enrollments.
+     * Triggers platform sync for all affected courses.
+     *
+     * @param userId ID of user to enroll
+     * @param courseIds set of course IDs to enroll the user in
+     * @return updated user entity with enrolled courses
+     * @throws EntityNotFoundException if any course IDs are invalid
+     */
     @Transactional
     public User enrollUserInCourses(Long userId, Set<Long> courseIds) {
         logger.info("Enrolling user in courses");

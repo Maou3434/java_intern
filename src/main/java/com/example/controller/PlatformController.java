@@ -1,5 +1,6 @@
 package com.example.controller;
 
+// Project-specific imports
 import com.example.constants.Constants;
 import com.example.dto.CourseDTO;
 import com.example.dto.PlatformDTO;
@@ -10,15 +11,24 @@ import com.example.mapper.PlatformMapper;
 import com.example.response.ResponseClass;
 import com.example.service.PlatformService;
 
+// Jakarta Validation imports
 import jakarta.validation.Valid;
+
+// Logging imports
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+// Spring Framework imports
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+// Java standard library imports
 import java.util.List;
 import java.util.Set;
 
+/**
+ * REST controller for managing platforms.
+ */
 @RestController
 @RequestMapping("/api/platforms")
 public class PlatformController {
@@ -33,6 +43,9 @@ public class PlatformController {
 
     // --- SQL CRUD ---
 
+    /**
+     * Get paginated list of platforms.
+     */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<List<PlatformDTO>> getAllPlatforms(
@@ -49,7 +62,7 @@ public class PlatformController {
                     logger.debug("Mapped a platform entity to DTO: {}", dto);
                     return dto;
                 })
-                .toList(); 
+                .toList();
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -58,7 +71,9 @@ public class PlatformController {
         );
     }
 
-
+    /**
+     * Get a platform by ID.
+     */
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<PlatformDTO> getPlatformById(@PathVariable Long id) {
@@ -74,6 +89,9 @@ public class PlatformController {
         );
     }
 
+    /**
+     * Create a new platform.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseClass<PlatformDTO> createPlatform(@Valid @RequestBody PlatformDTO platformDTO) {
@@ -93,6 +111,9 @@ public class PlatformController {
         );
     }
 
+    /**
+     * Update an existing platform by ID.
+     */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<PlatformDTO> updatePlatform(@PathVariable Long id, @Valid @RequestBody PlatformDTO platformDTO) {
@@ -112,6 +133,9 @@ public class PlatformController {
         );
     }
 
+    /**
+     * Delete a platform by ID.
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<PlatformDTO> deletePlatform(@PathVariable Long id) {
@@ -130,6 +154,9 @@ public class PlatformController {
 
     // --- Mongo reads ---
 
+    /**
+     * Get users related to a platform from MongoDB by platform Mongo ID.
+     */
     @GetMapping("/{mongoId}/users")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<List<UserDTO>> getUsersByPlatformMongoId(@PathVariable String mongoId) {
@@ -146,6 +173,9 @@ public class PlatformController {
         );
     }
 
+    /**
+     * Get courses related to a platform from MongoDB by platform Mongo ID.
+     */
     @GetMapping("/{mongoId}/courses")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<List<CourseDTO>> getCoursesByPlatformMongoId(@PathVariable String mongoId) {

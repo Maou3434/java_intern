@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Set;
 
 /**
- * Entity representing a course.
+ * Entity representing a Course.
  */
 @Entity
 @Table(
@@ -30,35 +30,57 @@ public class Course {
     @JoinColumn(name = "platform_id", nullable = true)
     private Platform platform;
 
-    /**
-     * Default constructor.
-     */
+    /** Default constructor */
     public Course() {}
 
     /**
-     * Constructor with title and platform.
+     * Constructs a Course with given title and platform.
      *
-     * @param title    Course title.
-     * @param platform Platform the course belongs to.
+     * @param title Course title
+     * @param platform Associated platform
      */
     public Course(String title, Platform platform) {
         this.title = title;
         this.platform = platform;
     }
 
-    public Long getId() { return id; }
+    /** Returns the course ID. */
+    public Long getId() {
+        return id;
+    }
 
-    public void setId(Long id) { this.id = id; }
+    /** Sets the course ID. */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getTitle() { return title; }
+    /** Returns the course title. */
+    public String getTitle() {
+        return title;
+    }
 
-    public void setTitle(String title) { this.title = title; }
+    /** Sets the course title. */
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public Set<User> getUsers() { return users; }
+    /** Returns users enrolled in the course. */
+    public Set<User> getUsers() {
+        return users;
+    }
 
-    public void setUsers(Set<User> users) { this.users = users; }
+    /** Sets the users enrolled in the course. */
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
 
-    public Platform getPlatform() { return platform; }
+    /** Returns the platform associated with the course. */
+    public Platform getPlatform() {
+        return platform;
+    }
 
-    public void setPlatform(Platform platform) { this.platform = platform; }
+    /** Sets the platform associated with the course. */
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
+    }
 }

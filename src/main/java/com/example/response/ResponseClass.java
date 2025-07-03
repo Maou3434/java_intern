@@ -1,14 +1,15 @@
 package com.example.response;
 
+// Spring HTTP status enum import
 import org.springframework.http.HttpStatus;
 
 /**
- * Generic response wrapper for API responses.
+ * Generic wrapper for API responses.
  *
- * @param <T> Type of the response entity
+ * @param <T> Type of the response payload
  */
 public class ResponseClass<T> {
-    
+
     private HttpStatus status;
     private String message;
     private T responseEntity;
@@ -19,11 +20,11 @@ public class ResponseClass<T> {
     public ResponseClass() {}
 
     /**
-     * Constructs a response with status, message, and entity.
+     * Constructs a response with HTTP status, message, and payload.
      *
-     * @param status HTTP status
-     * @param message Response message
-     * @param responseEntity Response payload
+     * @param status        HTTP status code
+     * @param message       Descriptive response message
+     * @param responseEntity Response payload of generic type T
      */
     public ResponseClass(HttpStatus status, String message, T responseEntity) {
         this.status = status;
@@ -32,14 +33,16 @@ public class ResponseClass<T> {
     }
 
     /**
-     * Gets the HTTP status.
+     * Returns the HTTP status code.
+     *
+     * @return HTTP status
      */
     public HttpStatus getStatus() {
         return status;
     }
 
     /**
-     * Sets the HTTP status.
+     * Sets the HTTP status code.
      *
      * @param status HTTP status
      */
@@ -48,7 +51,9 @@ public class ResponseClass<T> {
     }
 
     /**
-     * Gets the response message.
+     * Returns the response message.
+     *
+     * @return response message
      */
     public String getMessage() {
         return message;
@@ -57,23 +62,25 @@ public class ResponseClass<T> {
     /**
      * Sets the response message.
      *
-     * @param message Response message
+     * @param message response message
      */
     public void setMessage(String message) {
         this.message = message;
     }
 
     /**
-     * Gets the response entity.
+     * Returns the response payload.
+     *
+     * @return response entity of type T
      */
     public T getResponseEntity() {
         return responseEntity;
     }
 
     /**
-     * Sets the response entity.
+     * Sets the response payload.
      *
-     * @param responseEntity Response payload
+     * @param responseEntity response entity of type T
      */
     public void setResponseEntity(T responseEntity) {
         this.responseEntity = responseEntity;

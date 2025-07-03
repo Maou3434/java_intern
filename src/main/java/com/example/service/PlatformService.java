@@ -1,23 +1,34 @@
 package com.example.service;
 
+// DTOs
 import com.example.dto.CourseDTO;
 import com.example.dto.PlatformDTO;
 import com.example.dto.UserDTO;
+// Entities
 import com.example.entity.Course;
 import com.example.entity.Platform;
+// Mapper utility
 import com.example.mapper.PlatformMapper;
+// Constants for messages
 import com.example.constants.Constants;
+// MongoDB document and embedded classes
 import com.example.document.PlatformDocument;
 import com.example.document.PlatformDocument.CourseEmbed;
+// Repositories
 import com.example.repo.CourseRepository;
 import com.example.repo.PlatformDocRepository;
 import com.example.repo.PlatformRepository;
+// Service to sync platform data to MongoDB
 import com.example.sync.PlatformSyncService;
 
+// JPA exception
 import jakarta.persistence.EntityNotFoundException;
 
+// Logging
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+// Spring paging, service, and transaction
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +38,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service layer for managing Platform entities and associated data.
+ * Handles CRUD operations, syncing between SQL and MongoDB,
+ * and resolving embedded courses and users from MongoDB documents.
+ */
 @Service
 public class PlatformService {
 
@@ -37,6 +53,14 @@ public class PlatformService {
     private final CourseRepository courseRepository;
     private final PlatformSyncService platformSyncService;
 
+    /**
+     * Constructor for PlatformService.
+     *
+     * @param platformRepository Repository for Platform entities (SQL)
+     * @param platformDocRepository Repository for Platform documents (MongoDB)
+     * @param courseRepository Repository for Course entities (SQL)
+     * @param platformSyncService Service for syncing platform data to MongoDB
+     */
     public PlatformService(PlatformRepository platformRepository,
                            PlatformDocRepository platformDocRepository,
                            CourseRepository courseRepository,
@@ -47,6 +71,13 @@ public class PlatformService {
         this.platformSyncService = platformSyncService;
     }
 
+    /**
+     * Retrieves paginated list of platforms.
+     *
+     * @param page zero-based page index
+     * @param size number of items per page
+     * @return list of platforms for the requested page
+     */
     public List<Platform> getAllPlatforms(int page, int size) {
         logger.info("Fetching paginated platforms");
 
@@ -58,6 +89,13 @@ public class PlatformService {
         return pagedPlatforms.getContent();
     }
 
+    /**
+     * Retrieves a platform by its ID.
+     *
+     * @param id platform ID
+     * @return platform entity if found
+     * @throws EntityNotFoundException if platform not found
+     */
     public Platform getPlatformById(Long id) {
         logger.info("Fetching platform by ID");
 
@@ -68,6 +106,14 @@ public class PlatformService {
             });
     }
 
+    /**
+     * Creates a new platform along with its courses.
+     * Links courses back to platform.
+     * Triggers asynchronous sync to MongoDB.
+     *
+     * @param platform platform entity to create
+     * @return saved platform entity
+     */
     @Transactional
     public Platform createPlatform(Platform platform) {
         logger.info("Creating new platform");
@@ -86,6 +132,14 @@ public class PlatformService {
         return saved;
     }
 
+    /**
+     * Updates an existing platform and its courses.
+     * Syncs updates asynchronously to MongoDB.
+     *
+     * @param id platform ID to update
+     * @param platformDetails platform data with updated fields and courses
+     * @return updated platform entity
+     */
     @Transactional
     public Platform updatePlatform(Long id, Platform platformDetails) {
         logger.info("Updating platform");
@@ -101,10 +155,12 @@ public class PlatformService {
             existing.setCourses(existingCourses);
         }
 
+        // Remove courses no longer present
         existingCourses.removeIf(course ->
             updatedCourses.stream().noneMatch(updated -> updated.getId().equals(course.getId()))
         );
 
+        // Update existing or add new courses
         for (Course updatedCourse : updatedCourses) {
             Course existingCourse = existingCourses.stream()
                 .filter(c -> c.getId().equals(updatedCourse.getId()))
@@ -129,6 +185,13 @@ public class PlatformService {
         return updated;
     }
 
+    /**
+     * Deletes a platform by ID.
+     * Triggers async delete in MongoDB.
+     *
+     * @param id platform ID to delete
+     * @return DTO of deleted platform
+     */
     @Transactional
     public PlatformDTO deletePlatformById(Long id) {
         logger.info("Deleting platform");
@@ -145,6 +208,13 @@ public class PlatformService {
         return dto;
     }
 
+    /**
+     * Resolves courses from a PlatformDTO by fetching from SQL.
+     *
+     * @param dto PlatformDTO containing course IDs
+     * @return set of Course entities
+     * @throws EntityNotFoundException if any course IDs are not found
+     */
     public Set<Course> getCoursesByDTO(PlatformDTO dto) {
         logger.info("Resolving courses from DTO");
 
@@ -176,6 +246,13 @@ public class PlatformService {
         return new HashSet<>(foundCourses);
     }
 
+    /**
+     * Fetches users enrolled in a platform's courses from MongoDB document.
+     *
+     * @param platformDocId MongoDB document ID of platform
+     * @return list of UserDTOs with enrolled course IDs
+     * @throws EntityNotFoundException if platform document not found
+     */
     public List<UserDTO> getUsersByPlatformIdFromMongo(String platformDocId) {
         logger.info("Fetching users from MongoDB");
 
@@ -224,6 +301,13 @@ public class PlatformService {
                 )).toList();
     }
 
+    /**
+     * Fetches courses embedded in a platform's MongoDB document.
+     *
+     * @param platformDocId MongoDB document ID of platform
+     * @return list of CourseDTOs
+     * @throws EntityNotFoundException if platform document not found
+     */
     public List<CourseDTO> getCoursesByPlatformIdFromMongo(String platformDocId) {
         logger.info("Fetching courses from MongoDB");
 
@@ -246,6 +330,12 @@ public class PlatformService {
                 )).toList();
     }
 
+    /**
+     * Parses a string ID to Long, returns null on failure.
+     *
+     * @param idStr string representation of ID
+     * @return Long or null if parsing fails
+     */
     private Long parseId(String idStr) {
         try {
             return idStr == null ? null : Long.valueOf(idStr);

@@ -1,11 +1,10 @@
 package com.example.entity;
 
 import jakarta.persistence.*;
-
 import java.util.Set;
 
 /**
- * Entity representing a user.
+ * Entity representing a User.
  */
 @Entity
 @Table(
@@ -32,67 +31,57 @@ public class User {
     )
     private Set<Course> courses;
 
-    /**
-     * Default constructor.
-     */
+    /** Default constructor. */
     public User() {}
 
     /**
-     * Constructor with name and email.
+     * Constructs a User with the specified name and email.
      *
-     * @param name
-     * @param email
+     * @param name  the user's name
+     * @param email the user's unique email
      */
     public User(String name, String email) {
         this.name = name;
         this.email = email;
     }
 
-    /**
-     * Gets the user ID.
-     */
-    public Long getId() { return id; }
+    /** Returns the user ID. */
+    public Long getId() {
+        return id;
+    }
 
-    /**
-     * Sets the user ID.
-     *
-     * @param id
-     */
-    public void setId(Long id) { this.id = id; }
+    /** Sets the user ID. */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    /**
-     * Gets the user name.
-     */
-    public String getName() { return name; }
+    /** Returns the user's name. */
+    public String getName() {
+        return name;
+    }
 
-    /**
-     * Sets the user name.
-     *
-     * @param name
-     */
-    public void setName(String name) { this.name = name; }
+    /** Sets the user's name. */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    /**
-     * Gets the user email.
-     */
-    public String getEmail() { return email; }
+    /** Returns the user's email. */
+    public String getEmail() {
+        return email;
+    }
 
-    /**
-     * Sets the user email.
-     *
-     * @param email
-     */
-    public void setEmail(String email) { this.email = email; }
+    /** Sets the user's email. */
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    /**
-     * Gets the courses the user is enrolled in.
-     */
-    public Set<Course> getCourses() { return courses; }
+    /** Returns the set of courses the user is enrolled in. */
+    public Set<Course> getCourses() {
+        return courses;
+    }
 
-    /**
-     * Sets the courses the user is enrolled in.
-     *
-     * @param courses
-     */
-    public void setCourses(Set<Course> courses) { this.courses = courses; }
+    /** Sets the courses the user is enrolled in. */
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
+    }
 }

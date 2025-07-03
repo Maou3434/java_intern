@@ -1,13 +1,18 @@
 package com.example.controller;
 
+// Java standard library imports
 import java.util.List;
 import java.util.Set;
 
+// Logging imports
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+// Spring Framework imports
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+// Project-specific imports
 import com.example.constants.Constants;
 import com.example.dto.UserDTO;
 import com.example.entity.User;
@@ -15,8 +20,12 @@ import com.example.mapper.UserMapper;
 import com.example.response.ResponseClass;
 import com.example.service.UserService;
 
+// Jakarta Validation imports
 import jakarta.validation.Valid;
 
+/**
+ * REST controller for managing users.
+ */
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -29,6 +38,9 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Get paginated list of users.
+     */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<List<UserDTO>> getAllUsers(
@@ -54,6 +66,9 @@ public class UserController {
         );
     }
 
+    /**
+     * Get a user by ID.
+     */
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<UserDTO> getUserById(@PathVariable Long id) {
@@ -68,6 +83,9 @@ public class UserController {
         );
     }
 
+    /**
+     * Create a new user.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseClass<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
@@ -85,6 +103,9 @@ public class UserController {
         );
     }
 
+    /**
+     * Update an existing user by ID.
+     */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
@@ -103,6 +124,9 @@ public class UserController {
         );
     }
 
+    /**
+     * Delete a user by ID.
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<UserDTO> deleteUser(@PathVariable Long id) {
@@ -119,6 +143,9 @@ public class UserController {
         );
     }
 
+    /**
+     * Enroll a user in multiple courses.
+     */
     @PostMapping("/{id}/courses")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<UserDTO> enrollUserInCourses(@PathVariable Long id, @RequestBody Set<Long> courseIds) {

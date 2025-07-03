@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing courses.
+ */
 @RestController
 @RequestMapping("/api/courses")
 public class CourseController {
@@ -28,6 +31,13 @@ public class CourseController {
         this.courseService = courseService;
     }
 
+    /**
+     * Get paginated list of courses.
+     *
+     * @param page page number (default 0)
+     * @param size page size (default 10)
+     * @return response with list of CourseDTOs
+     */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<List<CourseDTO>> getAllCourses(
@@ -39,12 +49,8 @@ public class CourseController {
         List<Course> courses = courseService.getAllCourses(page, size);
 
         List<CourseDTO> courseDTOs = courses.stream()
-                .map(course -> {
-                    CourseDTO dto = CourseMapper.toDTO(course);
-                    logger.debug("Mapped Course to CourseDTO: {}", dto);
-                    return dto;
-                })
-                .toList(); 
+                .map(CourseMapper::toDTO)
+                .toList();
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -53,8 +59,12 @@ public class CourseController {
         );
     }
 
-
-
+    /**
+     * Get a course by its ID.
+     *
+     * @param id course ID
+     * @return response with the CourseDTO
+     */
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<CourseDTO> getCourseById(@PathVariable Long id) {
@@ -62,7 +72,6 @@ public class CourseController {
 
         Course course = courseService.getCourseById(id);
         CourseDTO dto = CourseMapper.toDTO(course);
-        logger.debug("Mapped Course to CourseDTO");
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -71,6 +80,12 @@ public class CourseController {
         );
     }
 
+    /**
+     * Create a new course.
+     *
+     * @param courseDTO course data
+     * @return response with created CourseDTO
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseClass<CourseDTO> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
@@ -79,7 +94,6 @@ public class CourseController {
         Course course = CourseMapper.toEntity(courseDTO);
         Course created = courseService.createCourse(course);
         CourseDTO dto = CourseMapper.toDTO(created);
-        logger.debug("Created course mapped to DTO");
 
         return new ResponseClass<>(
                 HttpStatus.CREATED,
@@ -88,6 +102,13 @@ public class CourseController {
         );
     }
 
+    /**
+     * Update an existing course by ID.
+     *
+     * @param id course ID
+     * @param courseDTO updated course data
+     * @return response with updated CourseDTO
+     */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<CourseDTO> updateCourse(@PathVariable Long id, @Valid @RequestBody CourseDTO courseDTO) {
@@ -95,9 +116,7 @@ public class CourseController {
 
         Course courseDetails = CourseMapper.toEntity(courseDTO);
         Course updatedCourse = courseService.updateCourse(id, courseDetails);
-
         CourseDTO dto = CourseMapper.toDTO(updatedCourse);
-        logger.debug("Updated course mapped to DTO");
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -106,6 +125,12 @@ public class CourseController {
         );
     }
 
+    /**
+     * Delete a course by ID.
+     *
+     * @param id course ID
+     * @return response with deleted CourseDTO
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<CourseDTO> deleteCourse(@PathVariable Long id) {
@@ -114,7 +139,6 @@ public class CourseController {
         Course course = courseService.getCourseById(id);
         CourseDTO dto = CourseMapper.toDTO(course);
         courseService.deleteCourse(id);
-        logger.debug("Deleted course mapped to DTO");
 
         return new ResponseClass<>(
                 HttpStatus.OK,

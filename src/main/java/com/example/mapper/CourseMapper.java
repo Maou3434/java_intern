@@ -1,21 +1,28 @@
 package com.example.mapper;
 
+// DTO imports
 import com.example.dto.CourseDTO;
+// Entity imports
 import com.example.entity.Course;
 
 /**
- * Mapper class for converting between Course entity and CourseDTO.
+ * Utility class for converting between {@link Course} entity and {@link CourseDTO}.
+ * <p>
+ * Provides static methods for mapping back and forth between entity and DTO representations.
+ * </p>
  */
 public class CourseMapper {
-	
-	private CourseMapper() {
-		throw new IllegalStateException("This is a utility class");
-	}
+
+    // Private constructor to prevent instantiation of utility class
+    private CourseMapper() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
-     * Converts Course entity to CourseDTO.
+     * Converts a {@link Course} entity to a {@link CourseDTO}.
      *
-     * @param course
+     * @param course the Course entity to convert
+     * @return a CourseDTO with the same id and title, or null if input is null
      */
     public static CourseDTO toDTO(Course course) {
         if (course == null) return null;
@@ -23,9 +30,10 @@ public class CourseMapper {
     }
 
     /**
-     * Converts CourseDTO to Course entity.
+     * Converts a {@link CourseDTO} to a {@link Course} entity.
      *
-     * @param dto
+     * @param dto the CourseDTO to convert
+     * @return a Course entity with the same id and title, or null if input is null
      */
     public static Course toEntity(CourseDTO dto) {
         if (dto == null) return null;
