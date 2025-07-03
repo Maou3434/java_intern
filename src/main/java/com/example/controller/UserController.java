@@ -47,7 +47,7 @@ public class UserController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Ret,
+                Constants.RETRIEVAL,
                 userDTOs
         );
     }
@@ -61,7 +61,7 @@ public class UserController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Ret,
+                Constants.RETRIEVAL,
                 UserMapper.toDTO(user)
         );
     }
@@ -78,7 +78,7 @@ public class UserController {
 
         return new ResponseClass<>(
                 HttpStatus.CREATED,
-                Constants.Crt,
+                Constants.CREATION,
                 UserMapper.toDTO(created)
         );
     }
@@ -96,7 +96,7 @@ public class UserController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Upd,
+                Constants.UPDATION,
                 UserMapper.toDTO(updatedUser)
         );
     }
@@ -112,7 +112,7 @@ public class UserController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Del,
+                Constants.DELETION,
                 deletedUser
         );
     }
@@ -128,7 +128,7 @@ public class UserController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Enr,
+                Constants.ENROLLEMENT,
                 UserMapper.toDTO(updatedUser)
         );
     }

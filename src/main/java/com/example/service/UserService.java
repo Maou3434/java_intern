@@ -57,8 +57,8 @@ public class UserService {
 
         return userRepository.findById(id)
             .orElseThrow(() -> {
-                logger.warn("User not found");
-                return new EntityNotFoundException(Constants.NFI + id);
+                logger.warn(Constants.ENTITY_NOT_FOUND);
+                return new EntityNotFoundException(Constants.NOT_FOUND + id);
             });
     }
 
@@ -67,7 +67,7 @@ public class UserService {
 
         if (userRepository.existsByEmail(user.getEmail())) {
             logger.warn("User already exists with given email");
-            throw new IllegalArgumentException(Constants.AEE + user.getEmail());
+            throw new IllegalArgumentException(Constants.ALREADY_EXISTS + user.getEmail());
         }
 
         User saved = userRepository.save(user);
@@ -84,14 +84,14 @@ public class UserService {
 
         User user = userRepository.findById(id)
             .orElseThrow(() -> {
-                logger.warn("User not found");
-                return new EntityNotFoundException(Constants.NFI + id);
+                logger.warn(Constants.ENTITY_NOT_FOUND);
+                return new EntityNotFoundException(Constants.NOT_FOUND + id);
             });
 
         if (userRepository.existsByEmail(userDetails.getEmail()) &&
             !user.getEmail().equals(userDetails.getEmail())) {
             logger.warn("Email already in use by another user");
-            throw new IllegalArgumentException(Constants.AEE + userDetails.getEmail());
+            throw new IllegalArgumentException(Constants.ALREADY_EXISTS + userDetails.getEmail());
         }
 
         user.setName(userDetails.getName());
@@ -116,8 +116,8 @@ public class UserService {
 
         User user = userRepository.findById(id)
             .orElseThrow(() -> {
-                logger.warn("User not found for deletion");
-                return new EntityNotFoundException(Constants.NFI + id);
+                logger.warn(Constants.ENTITY_NOT_FOUND);
+                return new EntityNotFoundException(Constants.NOT_FOUND + id);
             });
 
         UserDTO dto = UserMapper.toDTO(user);
@@ -137,8 +137,8 @@ public class UserService {
 
         User user = userRepository.findById(userId)
             .orElseThrow(() -> {
-                logger.warn("User not found");
-                return new EntityNotFoundException(Constants.NFI + userId);
+                logger.warn(Constants.ENTITY_NOT_FOUND);
+                return new EntityNotFoundException(Constants.NOT_FOUND + userId);
             });
 
         Set<Course> originalCourses = new HashSet<>(user.getCourses());
@@ -155,7 +155,7 @@ public class UserService {
                 missingIds.removeAll(foundIds);
 
                 logger.warn("Some course IDs not found for enrollment");
-                throw new EntityNotFoundException(Constants.NFI + missingIds);
+                throw new EntityNotFoundException(Constants.NOT_FOUND + missingIds);
             }
 
             user.getCourses().clear();

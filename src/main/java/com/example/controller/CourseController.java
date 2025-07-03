@@ -46,7 +46,7 @@ public class CourseController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Ret,
+                Constants.RETRIEVAL,
                 courseDTOs
         );
     }
@@ -63,7 +63,7 @@ public class CourseController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Ret,
+                Constants.RETRIEVAL,
                 dto
         );
     }
@@ -80,7 +80,7 @@ public class CourseController {
 
         return new ResponseClass<>(
                 HttpStatus.CREATED,
-                Constants.Crt,
+                Constants.CREATION,
                 dto
         );
     }
@@ -98,7 +98,7 @@ public class CourseController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Upd,
+                Constants.UPDATION,
                 dto
         );
     }
@@ -115,7 +115,7 @@ public class CourseController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Del,
+                Constants.DELETION,
                 dto
         );
     }

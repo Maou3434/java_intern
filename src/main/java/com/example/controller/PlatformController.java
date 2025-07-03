@@ -51,7 +51,7 @@ public class PlatformController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Ret,
+                Constants.RETRIEVAL,
                 dtos
         );
     }
@@ -66,7 +66,7 @@ public class PlatformController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Ret,
+                Constants.RETRIEVAL,
                 dto
         );
     }
@@ -85,7 +85,7 @@ public class PlatformController {
 
         return new ResponseClass<>(
                 HttpStatus.CREATED,
-                Constants.Crt,
+                Constants.CREATION,
                 dto
         );
     }
@@ -104,7 +104,7 @@ public class PlatformController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Upd,
+                Constants.UPDATION,
                 dto
         );
     }
@@ -120,7 +120,7 @@ public class PlatformController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Del,
+                Constants.DELETION,
                 dto
         );
     }
@@ -138,7 +138,7 @@ public class PlatformController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Ret,
+                Constants.RETRIEVAL,
                 users
         );
     }
@@ -154,7 +154,7 @@ public class PlatformController {
 
         return new ResponseClass<>(
                 HttpStatus.OK,
-                Constants.Ret,
+                Constants.RETRIEVAL,
                 courses
         );
     }

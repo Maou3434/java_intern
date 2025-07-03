@@ -64,7 +64,7 @@ public class PlatformService {
         return platformRepository.findById(id)
             .orElseThrow(() -> {
                 logger.warn("Platform not found");
-                return new EntityNotFoundException(Constants.NFI + id);
+                return new EntityNotFoundException(Constants.NOT_FOUND + id);
             });
     }
 
@@ -170,7 +170,7 @@ public class PlatformService {
             Set<Long> missingIds = new HashSet<>(courseIds);
             missingIds.removeAll(foundIds);
             logger.warn("Some course IDs not found");
-            throw new EntityNotFoundException(Constants.NFI + missingIds);
+            throw new EntityNotFoundException(Constants.NOT_FOUND + missingIds);
         }
 
         return new HashSet<>(foundCourses);
@@ -182,7 +182,7 @@ public class PlatformService {
         PlatformDocument doc = platformDocRepository.findById(platformDocId)
                 .orElseThrow(() -> {
                     logger.warn("Platform document not found");
-                    return new EntityNotFoundException(Constants.NFI + platformDocId);
+                    return new EntityNotFoundException(Constants.NOT_FOUND + platformDocId);
                 });
 
         List<CourseEmbed> courses = doc.getCourses();
@@ -231,7 +231,7 @@ public class PlatformService {
         PlatformDocument doc = platformDocRepository.findById(platformDocId)
                 .orElseThrow(() -> {
                     logger.warn("Platform document not found");
-                    return new EntityNotFoundException(Constants.NFI + platformDocId);
+                    return new EntityNotFoundException(Constants.NOT_FOUND + platformDocId);
                 });
 
         List<CourseEmbed> courses = doc.getCourses();

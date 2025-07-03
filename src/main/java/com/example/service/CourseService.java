@@ -50,8 +50,8 @@ public class CourseService {
 
         return courseRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.warn("Course not found");
-                    return new EntityNotFoundException(Constants.NFI);
+                    logger.warn(Constants.ENTITY_NOT_FOUND);
+                    return new EntityNotFoundException(Constants.NOT_FOUND);
                 });
     }
 
@@ -60,7 +60,7 @@ public class CourseService {
 
         if (courseRepository.existsByTitle(course.getTitle())) {
             logger.warn("Course title already exists");
-            throw new IllegalArgumentException(Constants.AEE);
+            throw new IllegalArgumentException(Constants.ALREADY_EXISTS);
         }
 
         Course saved = courseRepository.save(course);
@@ -79,14 +79,14 @@ public class CourseService {
 
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.warn("Course not found");
-                    return new EntityNotFoundException(Constants.NFI);
+                    logger.warn(Constants.ENTITY_NOT_FOUND);
+                    return new EntityNotFoundException(Constants.NOT_FOUND);
                 });
 
         if (courseRepository.existsByTitle(courseDetails.getTitle()) &&
                 !course.getTitle().equals(courseDetails.getTitle())) {
             logger.warn("Course title already exists");
-            throw new IllegalArgumentException(Constants.AEE);
+            throw new IllegalArgumentException(Constants.ALREADY_EXISTS);
         }
 
         course.setTitle(courseDetails.getTitle());
@@ -106,8 +106,8 @@ public class CourseService {
 
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.warn("Course not found");
-                    return new EntityNotFoundException(Constants.NFI);
+                    logger.warn(Constants.ENTITY_NOT_FOUND);
+                    return new EntityNotFoundException(Constants.NOT_FOUND);
                 });
 
         Platform platform = course.getPlatform();
