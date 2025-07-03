@@ -10,19 +10,9 @@ import com.example.entity.Platform;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-/**
- * Mapper class for converting between Platform entity/document and PlatformDTO.
- */
 public class PlatformMapper {
 
-    /**
-     * Converts Platform entity to PlatformDTO.
-     *
-     * @param platform JPA entity
-     * @return PlatformDTO or null if platform is null
-     */
     public static PlatformDTO toDTO(Platform platform) {
         if (platform == null) return null;
 
@@ -31,7 +21,7 @@ public class PlatformMapper {
         if (courses != null && !courses.isEmpty()) {
             courseDTOs = courses.stream()
                 .map(course -> new CourseDTO(course.getId(), course.getTitle()))
-                .collect(Collectors.toList());
+                .toList(); // Replaces Collectors.toList()
         }
 
         return new PlatformDTO(
@@ -41,12 +31,6 @@ public class PlatformMapper {
         );
     }
 
-    /**
-     * Converts PlatformDocument (Mongo) to PlatformDTO.
-     *
-     * @param platformDoc MongoDB document
-     * @return PlatformDTO or null if platformDoc is null
-     */
     public static PlatformDTO toDTO(PlatformDocument platformDoc) {
         if (platformDoc == null) return null;
 
@@ -55,7 +39,7 @@ public class PlatformMapper {
         if (courses != null && !courses.isEmpty()) {
             courseDTOs = courses.stream()
                 .map(embed -> new CourseDTO(parseId(embed.getId()), embed.getTitle()))
-                .collect(Collectors.toList());
+                .toList(); // Replaces Collectors.toList()
         }
 
         return new PlatformDTO(
@@ -65,13 +49,6 @@ public class PlatformMapper {
         );
     }
 
-    /**
-     * Converts PlatformDTO to Platform entity.
-     *
-     * @param dto PlatformDTO
-     * @param courses Set of Course entities to associate with Platform
-     * @return Platform entity
-     */
     public static Platform toEntity(PlatformDTO dto, Set<Course> courses) {
         if (dto == null) return null;
 

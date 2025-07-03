@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/platforms")
@@ -45,9 +44,12 @@ public class PlatformController {
         List<Platform> platforms = platformService.getAllPlatforms(page, size);
 
         List<PlatformDTO> dtos = platforms.stream()
-                .map(PlatformMapper::toDTO)
-                .peek(dto -> logger.debug("Mapped a platform entity to DTO"))
-                .collect(Collectors.toList());
+                .map(platform -> {
+                    PlatformDTO dto = PlatformMapper.toDTO(platform);
+                    logger.debug("Mapped a platform entity to DTO: {}", dto);
+                    return dto;
+                })
+                .toList(); 
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -55,6 +57,7 @@ public class PlatformController {
                 dtos
         );
     }
+
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)

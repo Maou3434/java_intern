@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/courses")
@@ -40,9 +39,12 @@ public class CourseController {
         List<Course> courses = courseService.getAllCourses(page, size);
 
         List<CourseDTO> courseDTOs = courses.stream()
-                .map(CourseMapper::toDTO)
-                .peek(dto -> logger.debug("Mapped Course to CourseDTO"))
-                .collect(Collectors.toList());
+                .map(course -> {
+                    CourseDTO dto = CourseMapper.toDTO(course);
+                    logger.debug("Mapped Course to CourseDTO: {}", dto);
+                    return dto;
+                })
+                .toList(); 
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -50,6 +52,7 @@ public class CourseController {
                 courseDTOs
         );
     }
+
 
 
     @GetMapping("/{id}")

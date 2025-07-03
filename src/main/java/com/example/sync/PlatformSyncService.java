@@ -62,7 +62,7 @@ public class PlatformSyncService {
                         course.getTitle(),
                         usersByCourseId.getOrDefault(course.getId(), Collections.emptyList())
                 ))
-                .collect(Collectors.toList());
+                .toList();
 
         PlatformDocument doc = new PlatformDocument(
                 platform.getName(),

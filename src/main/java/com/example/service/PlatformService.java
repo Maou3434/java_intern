@@ -221,8 +221,7 @@ public class PlatformService {
                                 .stream()
                                 .map(this::parseId)
                                 .collect(Collectors.toSet())
-                ))
-                .collect(Collectors.toList());
+                )).toList();
     }
 
     public List<CourseDTO> getCoursesByPlatformIdFromMongo(String platformDocId) {
@@ -244,8 +243,7 @@ public class PlatformService {
                 .map(c -> new CourseDTO(
                         parseId(c.getId()),
                         c.getTitle()
-                ))
-                .collect(Collectors.toList());
+                )).toList();
     }
 
     private Long parseId(String idStr) {

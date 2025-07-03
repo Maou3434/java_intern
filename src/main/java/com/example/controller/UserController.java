@@ -2,7 +2,6 @@ package com.example.controller;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +40,12 @@ public class UserController {
         List<User> users = userService.getAllUsers(page, size);
 
         List<UserDTO> userDTOs = users.stream()
-                .map(UserMapper::toDTO)
-                .peek(dto -> logger.debug("Mapped user entity to DTO"))
-                .collect(Collectors.toList());
+                .map(user -> {
+                    UserDTO dto = UserMapper.toDTO(user);
+                    logger.debug("Mapped user entity to DTO: {}", dto);
+                    return dto;
+                })
+                .toList(); // Java 16+ (returns unmodifiable list)
 
         return new ResponseClass<>(
                 HttpStatus.OK,
