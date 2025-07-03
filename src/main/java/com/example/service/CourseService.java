@@ -34,39 +34,40 @@ public class CourseService {
     }
 
     public List<Course> getAllCourses(int page, int size) {
-        logger.info("Fetching paginated courses - page: {}, size: {}", page, size);
+        logger.info("Fetching paginated courses");
         
         Pageable pageable = PageRequest.of(page, size);
         Page<Course> pagedCourses = courseRepository.findAll(pageable);
         
         logger.debug("Found {} courses on current page", pagedCourses.getNumberOfElements());
         
-        return pagedCourses.getContent(); // returns only the current page content
+        return pagedCourses.getContent();
     }
 
 
     public Course getCourseById(Long id) {
-        logger.info("Fetching course with ID {}", id);
+        logger.info("Fetching course");
+
         return courseRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.warn("Course not found with ID {}", id);
-                    return new EntityNotFoundException(Constants.NFI + id);
+                    logger.warn("Course not found");
+                    return new EntityNotFoundException(Constants.NFI);
                 });
     }
 
     public Course createCourse(Course course) {
-        logger.info("Creating course with title '{}'", course.getTitle());
+        logger.info("Creating course");
 
         if (courseRepository.existsByTitle(course.getTitle())) {
-            logger.warn("Course title '{}' already exists", course.getTitle());
-            throw new IllegalArgumentException(Constants.AEE + course.getTitle());
+            logger.warn("Course title already exists");
+            throw new IllegalArgumentException(Constants.AEE);
         }
 
         Course saved = courseRepository.save(course);
-        logger.debug("Course created with ID {}", saved.getId());
+        logger.debug("Course created");
 
         if (saved.getPlatform() != null) {
-            logger.info("Syncing platform ID {} to Mongo after course creation", saved.getPlatform().getId());
+            logger.info("Syncing platform to Mongo after course creation");
             platformSyncService.syncToMongo(saved.getPlatform());
         }
 
@@ -74,26 +75,26 @@ public class CourseService {
     }
 
     public Course updateCourse(Long id, Course courseDetails) {
-        logger.info("Updating course with ID {}", id);
+        logger.info("Updating course");
 
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.warn("Course not found with ID {}", id);
-                    return new EntityNotFoundException(Constants.NFI + id);
+                    logger.warn("Course not found");
+                    return new EntityNotFoundException(Constants.NFI);
                 });
 
         if (courseRepository.existsByTitle(courseDetails.getTitle()) &&
                 !course.getTitle().equals(courseDetails.getTitle())) {
-            logger.warn("Course title '{}' already exists", courseDetails.getTitle());
-            throw new IllegalArgumentException(Constants.AEE + courseDetails.getTitle());
+            logger.warn("Course title already exists");
+            throw new IllegalArgumentException(Constants.AEE);
         }
 
         course.setTitle(courseDetails.getTitle());
         Course updated = courseRepository.save(course);
-        logger.debug("Updated course with ID {}", updated.getId());
+        logger.debug("Updated course");
 
         if (updated.getPlatform() != null) {
-            logger.info("Syncing platform ID {} to Mongo after course update", updated.getPlatform().getId());
+            logger.info("Syncing platform to Mongo after course update");
             platformSyncService.syncToMongo(updated.getPlatform());
         }
 
@@ -101,20 +102,20 @@ public class CourseService {
     }
 
     public void deleteCourse(Long id) {
-        logger.info("Deleting course with ID {}", id);
+        logger.info("Deleting course");
 
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.warn("Course not found with ID {}", id);
-                    return new EntityNotFoundException(Constants.NFI + id);
+                    logger.warn("Course not found");
+                    return new EntityNotFoundException(Constants.NFI);
                 });
 
-        Platform platform = course.getPlatform(); // capture before deletion
+        Platform platform = course.getPlatform();
         courseRepository.delete(course);
-        logger.debug("Deleted course with ID {}", id);
+        logger.debug("Deleted course");
 
         if (platform != null) {
-            logger.info("Syncing platform ID {} to Mongo after course deletion", platform.getId());
+            logger.info("Syncing platform to Mongo after course deletion");
             platformSyncService.syncToMongo(platform);
         }
     }

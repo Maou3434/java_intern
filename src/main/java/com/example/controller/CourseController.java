@@ -35,13 +35,13 @@ public class CourseController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        logger.info("Fetching paginated courses - page: {}, size: {}", page, size);
+        logger.info("Fetching paginated courses");
 
         List<Course> courses = courseService.getAllCourses(page, size);
 
         List<CourseDTO> courseDTOs = courses.stream()
                 .map(CourseMapper::toDTO)
-                .peek(dto -> logger.debug("Mapped Course to CourseDTO: {}", dto))
+                .peek(dto -> logger.debug("Mapped Course to CourseDTO"))
                 .collect(Collectors.toList());
 
         return new ResponseClass<>(
@@ -55,10 +55,11 @@ public class CourseController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<CourseDTO> getCourseById(@PathVariable Long id) {
-        logger.info("Fetching course with ID: {}", id);
+        logger.info("Fetching course");
+
         Course course = courseService.getCourseById(id);
         CourseDTO dto = CourseMapper.toDTO(course);
-        logger.debug("Mapped Course to CourseDTO: {}", dto);
+        logger.debug("Mapped Course to CourseDTO");
 
         return new ResponseClass<>(
                 HttpStatus.OK,
@@ -71,6 +72,7 @@ public class CourseController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseClass<CourseDTO> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
         logger.info("Creating course");
+
         Course course = CourseMapper.toEntity(courseDTO);
         Course created = courseService.createCourse(course);
         CourseDTO dto = CourseMapper.toDTO(created);
@@ -86,10 +88,11 @@ public class CourseController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<CourseDTO> updateCourse(@PathVariable Long id, @Valid @RequestBody CourseDTO courseDTO) {
-        logger.info("Updating course with ID: {}, new data: {}", id, courseDTO);
+        logger.info("Updating course");
+
         Course courseDetails = CourseMapper.toEntity(courseDTO);
         Course updatedCourse = courseService.updateCourse(id, courseDetails);
-        
+
         CourseDTO dto = CourseMapper.toDTO(updatedCourse);
         logger.debug("Updated course mapped to DTO");
 
@@ -103,11 +106,12 @@ public class CourseController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseClass<CourseDTO> deleteCourse(@PathVariable Long id) {
-        logger.info("Deleting course with ID: {}", id);
+        logger.info("Deleting course");
+
         Course course = courseService.getCourseById(id);
         CourseDTO dto = CourseMapper.toDTO(course);
         courseService.deleteCourse(id);
-        logger.debug("Deleted course mapped to DTO: {}", dto);
+        logger.debug("Deleted course mapped to DTO");
 
         return new ResponseClass<>(
                 HttpStatus.OK,

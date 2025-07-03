@@ -75,7 +75,6 @@ public class PlatformController {
     public ResponseClass<PlatformDTO> createPlatform(@Valid @RequestBody PlatformDTO platformDTO) {
 
         logger.info("Received request to create platform");
-        logger.info("Received request to create platform");
         Set<Course> courses = platformService.getCoursesByDTO(platformDTO);
         Platform platform = PlatformMapper.toEntity(platformDTO, courses);
         Platform created = platformService.createPlatform(platform);
